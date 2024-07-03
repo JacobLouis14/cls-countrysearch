@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Country</title>
+  </head>
+  <!-- Bootstrap -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <!-- Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    * {
+      font-family: "Poppins";
+    }
+  </style>
+  <body>
+    <div
+      class="container-fluid"
+      style="
+        min-height: 100vh;
+        background-image: url('https://wallpapers.com/images/hd/high-resolution-watercolor-background-te7z914qffgmz28v.jpg');
+      "
+    >
+      <h1 class="pt-4 text-center text-light">Know the country</h1>
+
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+          <div class="search d-flex justify-content-center">
+            <input
+              id="inputCountry"
+              class="me-3 p-2 mt-3"
+              type="text"
+              style="
+                width: 80%;
+                border-radius: 10px;
+                outline: none;
+                border: none;
+              "
+            />
+            <button onclick="search()" type="button" class="btn btn-light mt-3">
+              Search
+            </button>
+          </div>
+
+          <!-- Cards -->
+          <div class="card mb-3 mt-5" id="outcard"></div>
+        </div>
+        <div class="col-md-2"></div>
+      </div>
+    </div>
+  </body>
+  <script>
+    let search = async () => {
+      let data = inputCountry.value;
+      if (data) {
+        const response = await fetch(
+          `https://restcountries.com/v3.1/name/${data}?fullText=true`
+        );
+        response
+          .json()
+          .then((res) => {
+            //languages
+            let national_Language = [];
+            for (const element in res[0].languages) {
+              national_Language.push(element);
+            }
+            //currency
+            let currencyName;
+            let currencySymbol;
+            for (const element in res[0].currencies) {
+              currencyName = res[0].currencies[element].name;
+              currencySymbol = res[0].currencies[element].symbol;
+            }
+            outcard.innerHTML = `
+            <div class="row g-0">
+              <div class="col-md-4 pt-5 ps-5">
+                <img
+                  src="${res[0].flags.png}"
+                  class="img-fluid rounded-start"
+                  alt="..."
+                />
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <ul class="list-group">
+                    <li class="list-group-item">Official Name: ${res[0].name.official}</li>
+                    <li class="list-group-item">Common Name: ${res[0].name.common}</li>
+                    <li class="list-group-item">Capital: ${res[0].capital}</li>
+                    <li class="list-group-item">Language: ${national_Language}</li>
+                    <li class="list-group-item">Borders: ${res[0].borders}</li>
+                  </ul>
+                  <ul class="list-group">
+                    <li class="list-group-item">Area: ${res[0].area}</li>
+                    <li class="list-group-item">Google Maps:<a target="_blank" href="${res[0].maps.googleMaps}">${res[0].maps.googleMaps}</a></li>
+                    <li class="list-group-item">Population: ${res[0].population}</li>
+                    <li class="list-group-item">Time zone: ${res[0].timezones}</li>
+                    <li class="list-group-item">Condinents: ${res[0].continents}</li>
+                    <li class="list-group-item">Currency Name: ${currencyName}</li>
+                    <li class="list-group-item">Currency Symbol: ${currencySymbol}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+`;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        alert("Enter valid data");
+      }
+    };
+  </script>
+</html>
